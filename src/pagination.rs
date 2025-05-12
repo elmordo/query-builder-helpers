@@ -61,3 +61,7 @@ impl<'args, DB: Database> PaginationExt<'args, DB> for QueryBuilder<'args, DB> {
         self
     }
 }
+
+
+#[cfg(feature = "postgres")]
+pub type PgPagination = Pagination<i64, sqlx::Postgres>;
