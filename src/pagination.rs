@@ -39,17 +39,6 @@ pub trait Pagination<'args, DB: Database> {
         &mut self,
         pagination: PaginationSettings<T, DB>,
     ) -> &mut Self;
-
-    fn push_optional_pagination<T: 'args + Type<DB> + for<'q> Encode<'q, DB>>(
-        &mut self,
-        pagination: Option<PaginationSettings<T, DB>>,
-    ) -> &mut Self {
-        if let Some(pagination) = pagination {
-            self.push_pagination(pagination)
-        } else {
-            self
-        }
-    }
 }
 
 impl<'args, DB: Database> Pagination<'args, DB> for QueryBuilder<'args, DB> {
