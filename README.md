@@ -8,11 +8,11 @@ the [QueryBuilder](https://docs.rs/sqlx/latest/sqlx/struct.QueryBuilder.html) of
 ## Main features of the library
 
 * pagination using the `Pagination` trait and `PaginationSettings` struct,
-* where collection helpers with the `WhereCondition` trait.
+* where collection helpers with the `Condtions` trait.
 
 ## Where condition helper
 
-The `WhereCondition` trait contains helpers for using following where conditions:
+The `Condtions` trait contains helpers for using following where conditions:
 
 * `(NOT) IN`
 * `LIKE`
