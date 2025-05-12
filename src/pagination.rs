@@ -2,7 +2,7 @@ use sqlx::{Database, Encode, QueryBuilder, Type};
 use std::marker::PhantomData;
 
 #[derive(Debug, Default, Copy, Clone)]
-pub struct PaginationConfig<T, DB: Database>
+pub struct PaginationSettings<T, DB: Database>
 where
     T: Type<DB> + for<'args> Encode<'args, DB>,
 {
@@ -11,7 +11,7 @@ where
     _db_type: PhantomData<DB>,
 }
 
-impl<T, DB: Database> PaginationConfig<T, DB>
+impl<T, DB: Database> PaginationSettings<T, DB>
 where
     T: Type<DB> + for<'q> Encode<'q, DB>,
 {
@@ -35,14 +35,14 @@ where
 }
 
 pub trait Pagination<'args, DB: Database> {
-    fn push_pagination<T: 'args +  Type<DB> + for<'q> Encode<'q, DB>>(
+    fn push_pagination<T: 'args + Type<DB> + for<'q> Encode<'q, DB>>(
         &mut self,
-        pagination: PaginationConfig<T, DB>,
+        pagination: PaginationSettings<T, DB>,
     ) -> &mut Self;
 
     fn push_optional_pagination<T: 'args + Type<DB> + for<'q> Encode<'q, DB>>(
         &mut self,
-        pagination: Option<PaginationConfig<T, DB>>,
+        pagination: Option<PaginationSettings<T, DB>>,
     ) -> &mut Self {
         if let Some(pagination) = pagination {
             self.push_pagination(pagination)
@@ -53,7 +53,10 @@ pub trait Pagination<'args, DB: Database> {
 }
 
 impl<'args, DB: Database> Pagination<'args, DB> for QueryBuilder<'args, DB> {
-    fn push_pagination<T: 'args + Type<DB> + for <'q> Encode<'q, DB>>(&mut self, pagination: PaginationConfig<T, DB>) -> &mut Self {
+    fn push_pagination<T: 'args + Type<DB> + for<'q> Encode<'q, DB>>(
+        &mut self,
+        pagination: PaginationSettings<T, DB>,
+    ) -> &mut Self {
         if let Some(offset) = pagination.offset {
             self.push(" OFFSET ");
             self.push_bind(offset);
