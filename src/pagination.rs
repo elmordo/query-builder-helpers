@@ -1,7 +1,7 @@
 use sqlx::{Database, Encode, QueryBuilder, Type};
 use std::marker::PhantomData;
 
-#[derive(Debug, Default, Copy, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct Pagination<T, DB: Database>
 where
     T: Type<DB> + for<'args> Encode<'args, DB>,
@@ -31,6 +31,19 @@ where
     pub fn set_offset(&mut self, offset: T) -> &mut Self {
         self.offset = Some(offset);
         self
+    }
+}
+
+impl<T, DB: Database> Default for Pagination<T, DB>
+where
+    T: Type<DB> + for<'q> Encode<'q, DB>,
+{
+    fn default() -> Self {
+        Self {
+            limit: None,
+            offset: None,
+            _db_type: PhantomData,
+        }
     }
 }
 
