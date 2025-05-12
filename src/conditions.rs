@@ -1,6 +1,6 @@
 use sqlx::{Database, Encode, QueryBuilder, Type};
 
-pub trait Conditions<'args, DB: Database> {
+pub trait ConditionExt<'args, DB: Database> {
     /// Push always true (like 1 = 1) to the builder.
     fn push_always_true(&mut self) -> &mut Self;
 
@@ -69,7 +69,7 @@ pub trait Conditions<'args, DB: Database> {
     fn push_close_parenthesis(&mut self) -> &mut Self;
 }
 
-impl<'args, DB: Database> Conditions<'args, DB> for QueryBuilder<'args, DB> {
+impl<'args, DB: Database> ConditionExt<'args, DB> for QueryBuilder<'args, DB> {
     fn push_always_true(&mut self) -> &mut Self {
         self.push(" 1 = 1 ")
     }

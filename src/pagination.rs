@@ -2,7 +2,7 @@ use sqlx::{Database, Encode, QueryBuilder, Type};
 use std::marker::PhantomData;
 
 #[derive(Debug, Default, Copy, Clone)]
-pub struct PaginationSettings<T, DB: Database>
+pub struct Pagination<T, DB: Database>
 where
     T: Type<DB> + for<'args> Encode<'args, DB>,
 {
@@ -11,7 +11,7 @@ where
     _db_type: PhantomData<DB>,
 }
 
-impl<T, DB: Database> PaginationSettings<T, DB>
+impl<T, DB: Database> Pagination<T, DB>
 where
     T: Type<DB> + for<'q> Encode<'q, DB>,
 {
@@ -34,17 +34,17 @@ where
     }
 }
 
-pub trait Pagination<'args, DB: Database> {
+pub trait PaginationExt<'args, DB: Database> {
     fn push_pagination<T: 'args + Type<DB> + for<'q> Encode<'q, DB>>(
         &mut self,
-        pagination: PaginationSettings<T, DB>,
+        pagination: Pagination<T, DB>,
     ) -> &mut Self;
 }
 
-impl<'args, DB: Database> Pagination<'args, DB> for QueryBuilder<'args, DB> {
+impl<'args, DB: Database> PaginationExt<'args, DB> for QueryBuilder<'args, DB> {
     fn push_pagination<T: 'args + Type<DB> + for<'q> Encode<'q, DB>>(
         &mut self,
-        pagination: PaginationSettings<T, DB>,
+        pagination: Pagination<T, DB>,
     ) -> &mut Self {
         if let Some(offset) = pagination.offset {
             self.push(" OFFSET ");
