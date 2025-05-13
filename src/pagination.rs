@@ -23,6 +23,14 @@ where
         }
     }
 
+    pub fn empty() -> Self {
+        Self {
+            limit: None,
+            offset: None,
+            _db_type: PhantomData,
+        }
+    }
+
     pub fn set_limit(&mut self, limit: T) -> &mut Self {
         self.limit = Some(limit);
         self
